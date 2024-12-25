@@ -154,6 +154,7 @@ coherence via RefillTest.
 | `DiffCSRState` | Control and status registers (CSRs) | Yes |
 | `DiffVecCSRState` | CSRs for the Vector extension | No |
 | `DiffHCSRState` | CSRs for the Hypervisor extension | No |
+| `DiffMatrixCSRState` | CSRs for the Matrix extension | No |
 | `DiffDebugMode` | Debug mode registers | No |
 | `DiffIntWriteback` | General-purpose writeback operations | No |
 | `DiffFpWriteback` | Floating-point writeback operations | No |

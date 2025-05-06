@@ -203,8 +203,7 @@ public:
   DifftestFpCSRState fcsr;
 #endif // CONFIG_DIFFTEST_FPCSRSTATE
 #ifdef CONFIG_DIFFTEST_MATRIXCSRSTATE
-// // TODO: Implement ports in NEMU，and then enable me
-//  DifftestMatrixCSRState mcsr;
+  DifftestMatrixCSRState mcsr;
 #endif
 #ifdef CONFIG_DIFFTEST_TRIGGERCSRSTATE
   DifftestTriggerCSRState triggercsr;

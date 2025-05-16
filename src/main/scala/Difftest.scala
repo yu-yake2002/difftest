@@ -435,6 +435,15 @@ class DiffAIAXtopeiEvent extends AIAXtopeiEvent with DifftestBundle {
   override val desiredCppName: String = "aia_xtopei"
 }
 
+class DiffAmuCtrlEvent extends AmuCtrlEvent with DifftestBundle with DifftestWithIndex {
+  override val desiredCppName: String = "amu_ctrl"
+}
+
+// TODO: Matrix Store Event in AME
+// class DiffMatrixStoreEvent extends MatrixStoreEvent with DifftestBundle with DifftestWithIndex {
+//   override val desiredCppName: String = "matrix_store"
+// }
+
 class DiffTraceInfo(config: GatewayConfig) extends TraceInfo with DifftestBundle {
   override val desiredCppName: String = "trace_info"
 

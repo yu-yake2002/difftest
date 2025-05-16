@@ -155,7 +155,9 @@ public:
   f(raise_mhpmevent_overflow, difftest_raise_mhpmevent_overflow, void, uint64_t)                            \
   f(ref_raise_critical_error, difftest_raise_critical_error, bool)                                          \
   f(ref_get_store_event_other_info, difftest_get_store_event_other_info, void, void*)                       \
-  f(ref_aia_xtopei, difftest_aia_xtopei, void, void*)
+  f(ref_aia_xtopei, difftest_aia_xtopei, void, void*)                                                       \
+  f(ref_amu_ctrl, difftest_amu_ctrl, int, void*)                                                            \
+  f(ref_get_amu_ctrl_event_other_info, difftest_get_amu_ctrl_event_other_info, void, void*)
 #define RefFunc(func, ret, ...) ret func(__VA_ARGS__)
 #define DeclRefFunc(this_func, dummy, ret, ...) RefFunc((*this_func), ret, __VA_ARGS__);
 /* clang-format on */
@@ -321,6 +323,26 @@ public:
     } else {
       printf(
           "This version of 'REF' does not support the 'PC' value of store commit event. Please use a newer version of "
+          "'REF'.\n");
+    }
+  }
+
+  inline int get_amu_ctrl_event(void *info) {
+    if (ref_amu_ctrl) {
+      return ref_amu_ctrl(info);
+    } else {
+      printf("This version of 'REF' does not support the 'PC' value of AmuCtrl event. Please use a newer version of "
+             "'REF'.\n");
+      return 1;
+    }
+  }
+
+  inline void get_amu_ctrl_event_other_info(void *info) {
+    if (ref_get_amu_ctrl_event_other_info) {
+      ref_get_amu_ctrl_event_other_info(info);
+    } else {
+      printf(
+          "This version of 'REF' does not support the 'PC' value of AmuCtrl event. Please use a newer version of "
           "'REF'.\n");
     }
   }

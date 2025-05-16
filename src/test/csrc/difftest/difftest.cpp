@@ -270,6 +270,10 @@ void Difftest::do_replay() {
   while (!load_event_queue.empty())
     load_event_queue.pop();
 #endif
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
+  while (!amu_ctrl_event_queue.empty())
+    amu_ctrl_event_queue.pop();
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 }
 #endif // CONFIG_DIFFTEST_REPLAY
 
@@ -326,6 +330,10 @@ inline int Difftest::check_all() {
   load_event_record();
 #endif // CONFIG_DIFFTEST_LOADEVENT
 #endif // CONFIG_DIFFTEST_SQUASH
+
+#ifdef DEBUG_AMUCTRL
+  amu_ctrl_event_record();
+#endif // DEBUG_AMUCTRL
 
 #ifdef DEBUG_GOLDENMEM
   if (do_golden_memory_update()) {
@@ -428,6 +436,12 @@ inline int Difftest::check_all() {
       }
     }
   }
+
+#ifdef DEBUG_AMUCTRL
+  if (do_amuctrl_check()) {
+    return 1;
+  }
+#endif
 
   if (update_delayed_writeback()) {
     return 1;
@@ -1079,6 +1093,45 @@ typedef struct {
   uint8_t level;
 } r_s2xlate;
 
+int Difftest::do_amuctrl_check() {
+  // TODO: implement AMU control check
+  while (!amu_ctrl_event_queue.empty()) {
+    DifftestAmuCtrlEvent amu_event = amu_ctrl_event_queue.front();
+#ifdef CONFIG_DIFFTEST_SQUASH
+    // TODO: What is squash? How to squash?
+#endif // CONFIG_DIFFTEST_SQUASH
+    auto op = amu_event.op;
+    auto md = amu_event.md;
+    auto sat = amu_event.sat;
+    auto ms1 = amu_event.ms1;
+    auto ms2 = amu_event.ms2;
+    auto mtilem = amu_event.mtilem;
+    auto mtilen = amu_event.mtilen;
+    auto mtilek = amu_event.mtilek;
+    auto types = amu_event.types;
+    auto typed = amu_event.typed;
+    auto transpose = amu_event.transpose;
+    auto isacc = amu_event.isacc;
+    auto base = amu_event.base;
+    auto stride = amu_event.stride;
+
+    if (proxy->get_amu_ctrl_event(&amu_event)) {
+      // return 1 for dismatch
+      uint64_t pc = amu_event.pc;
+      display();
+
+      printf("\n==============  Amu Mma Ctrl Event (Core %d)  ==============\n", this->id);
+      proxy->get_amu_ctrl_event_other_info(&pc);
+      printf("Mismatch for amu mma ctrl event \n");
+      // TODO: print amu event info
+      amu_ctrl_event_queue.pop();
+      return 1;
+    }
+    amu_ctrl_event_queue.pop();
+  }
+  return 0;
+}
+
 r_s2xlate do_s2xlate(Hgatp *hgatp, uint64_t gpaddr) {
   PTE pte;
   uint64_t hpaddr;
@@ -1496,6 +1549,17 @@ void Difftest::load_event_record() {
 }
 #endif // CONFIG_DIFFTEST_LOADEVENT
 #endif // CONFIG_DIFFTEST_SQUASH
+
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
+void Difftest::amu_ctrl_event_record() {
+  for (int i = 0; i < CONFIG_DIFF_AMU_CTRL_WIDTH; i++) {
+    if (dut->amu_ctrl[i].valid) {
+      amu_ctrl_event_queue.push(dut->amu_ctrl[i]);
+      dut->amu_ctrl[i].valid = 0;
+    }
+  }
+}
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
 #ifdef CONFIG_DIFFTEST_CMOINVALEVENT
 void Difftest::cmo_inval_event_record() {

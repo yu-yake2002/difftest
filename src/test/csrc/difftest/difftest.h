@@ -389,6 +389,11 @@ protected:
   void cmo_inval_event_record();
 #endif
 
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
+  std::queue<DifftestAmuCtrlEvent> amu_ctrl_event_queue;
+  void amu_ctrl_event_record();
+#endif
+
   void update_last_commit() {
     last_commit = get_trap_event()->cycleCnt;
   }
@@ -409,6 +414,7 @@ protected:
   int do_ptwrefill_check();
   int do_l1tlb_check();
   int do_l2tlb_check();
+  int do_amuctrl_check();
   int do_golden_memory_update();
 
   inline uint64_t get_commit_data(int i) {

@@ -46,6 +46,7 @@ GSIM_CXXFLAGS = $(subst \\\",\", $(SIM_CXXFLAGS)) -DNUM_CORES=$(NUM_CORES) -DGSI
 						-I$(VERILITOR_CSRC_DIR) -I$(GEN_VSRC_DIR) \
 						-I$(GSIM_GEN_CSRC_DIR)/ \
 						-O3 $(PGO_CFLAGS) \
+						-Xclang -fexperimental-max-bitint-width=65536 \
 						-fbracket-depth=2048 -Wno-parentheses-equality
 LDFLAGS   =  $(SIM_LDFLAGS) -ldl $(PGO_LDFLAGS)
 

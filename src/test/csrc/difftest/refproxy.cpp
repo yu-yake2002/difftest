@@ -113,16 +113,23 @@ void *AbstractRefProxy::load_handler(const char *env, const char *file_path) {
 #endif // REF_HOME
     }
     char *buf = (char *)malloc(256);
-    sprintf(buf, "%s/%s", ref_home, file_path);
+    snprintf(buf, 256, "%s/%s", ref_home, file_path);
     difftest_ref_so = buf;
     use_given_diff = false;
   }
 
   Info("The reference model is %s\n", difftest_ref_so);
 
-  int mode = RTLD_LAZY | RTLD_DEEPBIND;
-  void *so_handler = (NUM_CORES > 1) ? dlmopen(LM_ID_NEWLM, difftest_ref_so, mode) : dlopen(difftest_ref_so, mode);
-  check_and_assert(so_handler);
+  int mode = RTLD_LAZY;
+
+  void *so_handler = nullptr;
+
+#if !defined(__APPLE__)
+  so_handler = dlopen(difftest_ref_so, mode);
+#else
+  so_handler = dlopen(difftest_ref_so, mode);
+#endif
+  check_and_assert(so_handler); 
 
   if (!use_given_diff) {
     free((void *)difftest_ref_so);

@@ -118,10 +118,9 @@ public:
   bool in_range_u64(uint64_t index) {
     return index < memory_size / sizeof(uint64_t);
   }
-
-  virtual void clone(std::function<void(void *, size_t)> func, bool skip_zero = false) = 0;
-  virtual void clone_on_demand(std::function<void(uint64_t, void *, size_t)> func, bool skip_zero = false) {
-    clone([func](void *src, size_t n) { func(0, src, n); }, skip_zero);
+  virtual void clone(std::function<void(void *, uint64_t)> func, bool skip_zero = false) = 0;
+  virtual void clone_on_demand(std::function<void(uint64_t, void *, uint64_t)> func, bool skip_zero = false) {
+    clone([func](void *src, uint64_t n) { func(0, src, n); }, skip_zero);
   }
   virtual uint64_t *as_ptr() {
     return nullptr;

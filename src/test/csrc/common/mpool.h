@@ -25,8 +25,19 @@
 #include <mutex>
 #include <stdexcept>
 #include <vector>
-#include <xmmintrin.h>
-
+#if defined(__x86_64__) || defined(__i386__)
+    #include <xmmintrin.h>
+    #define SPIN_HINT() _mm_pause()
+#elif defined(__aarch64__) || defined(__arm__)
+    #if defined(__ARM_ACLE) || defined(__GNUC__)
+        #include <arm_acle.h>
+        #define SPIN_HINT() __yield()
+    #else
+        #define SPIN_HINT() __asm__ volatile("yield" ::: "memory")
+    #endif
+#else
+    #define SPIN_HINT()  // 什么都不做，或者插入空操作
+#endif
 #define MEMPOOL_SIZE    16384 * 1024 // 16M memory
 #define MEMBLOCK_SIZE   4096         // 4K packge
 #define NUM_BLOCKS      (MEMPOOL_SIZE / MEMBLOCK_SIZE)
@@ -88,7 +99,7 @@ class SpinLock {
 public:
   void lock() {
     while (locked.test_and_set(std::memory_order_acquire))
-      _mm_pause();
+      SPIN_HINT();
   }
   void unlock() {
     locked.clear(std::memory_order_release);

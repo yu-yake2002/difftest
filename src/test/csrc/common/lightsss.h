@@ -22,7 +22,12 @@
 #include <list>
 #include <signal.h>
 #include <sys/ipc.h>
+#if !defined(__APPLE__)
 #include <sys/prctl.h>
+#else
+
+#endif
+// #include <sys/prctl.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
 #include <unistd.h>

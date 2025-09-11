@@ -392,7 +392,12 @@ protected:
 #ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
   std::queue<DifftestAmuCtrlEvent> amu_ctrl_event_queue;
   void amu_ctrl_event_record();
-#endif
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
+
+#ifdef CONFIG_DIFFTEST_TOKENEVENT
+  std::queue<DifftestTokenEvent> token_event_queue;
+  void token_event_record();
+#endif // CONFIG_DIFFTEST_TOKENEVENT
 
   void update_last_commit() {
     last_commit = get_trap_event()->cycleCnt;
@@ -415,6 +420,7 @@ protected:
   int do_l1tlb_check();
   int do_l2tlb_check();
   int do_amuctrl_check();
+  int do_token_check();
   int do_golden_memory_update();
 
   inline uint64_t get_commit_data(int i) {

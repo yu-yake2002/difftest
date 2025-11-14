@@ -1096,7 +1096,7 @@ typedef struct {
   uint8_t level;
 } r_s2xlate;
 
-static char amu_ctrl_op_str[3][16] = {"MMA", "MLS", "MRELEASE"};
+static char amu_ctrl_op_str[4][16] = {"MMA", "MLS", "MRELEASE", "MARITH"};
 
 int Difftest::do_amuctrl_check() {
   while (!amu_ctrl_event_queue.empty()) {
@@ -1147,6 +1147,9 @@ int Difftest::do_amuctrl_check() {
         case 2: // MRelease
           printf("                tokenRd %d\n", amu_event.mtilem);
           break;
+        case 3: // Arith
+          printf("                md %d, opType %#lx\n", amu_event.md, amu_event.base);
+          break;
         default:
           printf("                Unknown amu event op\n");
           break;
@@ -1165,6 +1168,9 @@ int Difftest::do_amuctrl_check() {
           break;
         case 2: // MRelease
           printf("                tokenRd %d\n", mtilem);
+          break;
+        case 3: // Arith
+          printf("                md %d, opType %#lx\n", md, base);
           break;
         default:
           printf("                Unknown amu event op\n");
@@ -1190,6 +1196,9 @@ int Difftest::do_amuctrl_check() {
           break;
         case 2: // MRelease
           printf("                tokenRd %d\n", mtilem);
+          break;
+        case 3: // Arith
+          printf("                md %d, opType %#lx\n", md, base);
           break;
         default:
           printf("                Unknown amu event op\n");

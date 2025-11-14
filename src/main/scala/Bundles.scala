@@ -409,6 +409,8 @@ class AmuCtrlEvent extends DifftestBaseBundle with HasValid {
   val pc = UInt(64.W)
 
   def tokenRd: UInt = mtilem
+
+  def opType: UInt = base
 }
 
 class TokenEvent extends DifftestBaseBundle with HasValid {

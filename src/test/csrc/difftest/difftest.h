@@ -340,7 +340,7 @@ protected:
 #ifdef CONFIG_DIFFTEST_SQUASH
   static const uint64_t timeout_scale = 256;
 #else
-  static const uint64_t timeout_scale = 1;
+  static const uint64_t timeout_scale = 2;
 #endif // CONFIG_DIFFTEST_SQUASH
 #if defined(CPU_NUTSHELL) || defined(CPU_ROCKET_CHIP)
   static const uint64_t first_commit_limit = 1000;

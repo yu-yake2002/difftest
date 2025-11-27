@@ -1626,7 +1626,17 @@ int Difftest::do_golden_memory_update() {
     }
   }
 #endif // CONFIG_DIFFTEST_SBUFFEREVENT
-
+#ifdef CONFIG_DIFFTEST_MATRIXSTOREEVENT
+  for (int i = 0; i < CONFIG_DIFF_MATRIX_STORE_WIDTH; i++) {
+    if (dut->matrix_store[i].valid) {
+      dut->matrix_store[i].valid = 0;
+      update_goldenmem(dut->matrix_store[i].addr, dut->matrix_store[i].data, dut->matrix_store[i].mask, 64);
+      if (dut->matrix_store[i].addr == track_instr) {
+        dumpGoldenMem("Matrix Store", track_instr, cycleCnt);
+      }
+    }
+  }
+#endif // CONFIG_DIFFTEST_MATRIXSTOREEVENT
 #ifdef CONFIG_DIFFTEST_ATOMICEVENT
   if (dut->atomic.valid) {
     dut->atomic.valid = 0;

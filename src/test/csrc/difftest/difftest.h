@@ -235,6 +235,23 @@ private:
   void display_commit_instr(int index, CommitTrace *trace, bool is_retire);
 };
 
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
+enum AmeInstState {
+  INVALID = 0,
+  WAIT_REF_COMMIT,
+  WAIT_DUT_EXEC,
+  WAIT_SWROB_COMMIT
+};
+
+typedef struct {
+  DifftestAmuCtrlEvent amu_event;
+  AmeInstState state;
+  uint64_t *res;
+} AmeInstRobEntry;
+
+#include "mma_verifier.h"
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
+
 class Difftest {
 public:
   DiffTestState *dut;
@@ -390,8 +407,17 @@ protected:
 #endif
 
 #ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
-  std::queue<DifftestAmuCtrlEvent> amu_ctrl_event_queue;
+  std::deque<AmeInstRobEntry> matrix_sw_rob;
   void amu_ctrl_event_record();
+  void amu_inst_finish_record();
+  std::deque<AmeInstRobEntry>::iterator have_check_ctrl;
+  
+  // MMA verifier instance
+  MmaVerifier *mma_verifier;
+  
+  // AMU finish event buffers
+  // Each buffer is a 128x128 matrix of 32-bit elements (4 bytes each)
+  uint8_t *amu_finish_buffers[CONFIG_DIFF_AMU_FINISH_WIDTH];
 #endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
 #ifdef CONFIG_DIFFTEST_TOKENEVENT
@@ -421,6 +447,7 @@ protected:
   int do_l2tlb_check();
   int do_amuctrl_check();
   int do_token_check();
+  int do_amuexec_check();
   int do_golden_memory_update();
 
   inline uint64_t get_commit_data(int i) {

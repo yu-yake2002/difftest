@@ -445,9 +445,11 @@ protected:
   int do_ptwrefill_check();
   int do_l1tlb_check();
   int do_l2tlb_check();
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
   int do_amuctrl_check();
   int do_token_check();
   int do_amuexec_check();
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
   int do_golden_memory_update();
 
   inline uint64_t get_commit_data(int i) {

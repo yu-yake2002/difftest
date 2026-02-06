@@ -397,11 +397,11 @@ inline int Difftest::check_all() {
 #endif // CONFIG_DIFFTEST_LOADEVENT
 #endif // CONFIG_DIFFTEST_SQUASH
 
-#ifdef DEBUG_AMUCTRL
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
   amu_ctrl_event_record();
   amu_inst_finish_record();
   token_event_record();
-#endif // DEBUG_AMUCTRL
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
 #ifdef DEBUG_GOLDENMEM
   if (do_golden_memory_update()) {
@@ -501,7 +501,7 @@ inline int Difftest::check_all() {
     }
   }
 
-#ifdef DEBUG_AMUCTRL
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
   if (do_amuctrl_check()) {
     return 1;
   }
@@ -511,7 +511,7 @@ inline int Difftest::check_all() {
   if (do_token_check()) {
     return 1;
   }
-#endif
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
   if (update_delayed_writeback()) {
     return 1;
   }
@@ -1161,8 +1161,11 @@ typedef struct {
   uint8_t level;
 } r_s2xlate;
 
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
 static char amu_ctrl_op_str[4][16] = {"MMA", "MLS", "MRELEASE", "MARITH"};
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
 int Difftest::do_amuctrl_check() {
   for (auto iter = matrix_sw_rob.begin(); iter != matrix_sw_rob.end(); ++iter) {
     if (iter->state == WAIT_REF_COMMIT) {
@@ -1279,7 +1282,9 @@ int Difftest::do_amuctrl_check() {
   }
   return 0;
 }
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
+#ifdef CONFIG_DIFFTEST_AMUCTRLEVENT
 int Difftest::do_amuexec_check() {
   // For each amu ctrl in sw_rob, check whether the inst is able to be committed. 
   for (auto iter = matrix_sw_rob.begin(); iter != matrix_sw_rob.end(); ) {
@@ -1323,9 +1328,13 @@ int Difftest::do_amuexec_check() {
   }
   return 0;
 }
+#endif // CONFIG_DIFFTEST_AMUCTRLEVENT
 
+#ifdef CONFIG_DIFFTEST_TOKENEVENT
 static char token_event_op_str[2][16] = {"msyncregreset", "macquire"};
+#endif // CONFIG_DIFFTEST_TOKENEVENT
 
+#ifdef CONFIG_DIFFTEST_TOKENEVENT
 int Difftest::do_token_check() {
   while (!token_event_queue.empty()) {
     DifftestTokenEvent token_event = token_event_queue.front();
@@ -1361,6 +1370,7 @@ int Difftest::do_token_check() {
   }
   return 0;
 }
+#endif // CONFIG_DIFFTEST_TOKENEVENT
 
 r_s2xlate do_s2xlate(Hgatp *hgatp, uint64_t gpaddr) {
   PTE pte;
